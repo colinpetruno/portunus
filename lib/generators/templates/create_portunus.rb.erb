@@ -1,0 +1,18 @@
+class CreatePortunus < ActiveRecord::Migration<%= migration_version %>
+  def change
+    create_table :portunus_data_encryption_keys do |t|
+      t.string :encrypted_key, null: false
+      t.string :master_keyname, null: false
+      t.string :encryptable_type, null: false
+      t.integer :encryptable_id, null: false
+      t.timestamps
+    end
+
+    add_index(
+      :portunus_data_encryption_keys,
+      [:encryptable_id, :encryptable_type],
+      unique: true,
+      name: "portunus_dek_on_encryptable_id_and_encryptable_type"
+    )
+  end
+end
