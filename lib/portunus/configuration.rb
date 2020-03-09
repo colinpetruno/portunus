@@ -1,9 +1,10 @@
 module Portunus
   class Configuration
-    attr_reader :master_key_names, :storage_adaptor
+    attr_reader :master_key_names, :storage_adaptor, :encrypter
 
     def initialize
-      @storage_adaptor = Portunus::MasterKeys::CredentialsAdaptor
+      @storage_adaptor = ::Portunus::StorageAdaptors::Credentials
+      @encrypter = ::Portunus::Encrypters::OpenSslAes
       @keys_loaded = false
       @master_key_names = []
     end

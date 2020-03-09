@@ -1,6 +1,6 @@
 module Portunus
-  module MasterKeys
-    class CredentialsAdaptor
+  module StorageAdaptors
+    class Credentials
       def self.for(data_encryption_key)
         new(data_encryption_key).find
       end
@@ -13,6 +13,7 @@ module Portunus
         end
       end
 
+      # Required method
       def self.lookup(key_name)
         master_key = Rails.application.credentials.portunus[key_name.to_sym]
         MasterKey.new(
@@ -24,6 +25,7 @@ module Portunus
         raise ::Portunus::Error.new("Portunus: Master key not found")
       end
 
+      # Required method
       def self.list
         key_names = Rails.application.credentials.portunus.keys
         # reject any disabled keys so we no longer utilize them for new

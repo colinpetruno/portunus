@@ -1,6 +1,6 @@
 module Portunus
-  module MasterKeys
-    class EnvironmentAdaptor
+  module StorageAdaptors
+    class Environment
 
       def self.load
         key_names = ENV.keys.select { |key| key.start_with?("PORTUNUS_") }

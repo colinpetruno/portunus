@@ -21,8 +21,10 @@ You will need to add Portunus and the latest commit of the AES gem. This is
 due to fixing an openssl deprecation that has not yet been added as a new
 release in Ruby Gems. 
 
+https://github.com/chicks/aes/issues/15
+
 ```ruby
-gem 'portunus'
+gem "portunus"
 
 gem(
   "aes", 
@@ -31,17 +33,27 @@ gem(
 )
 ```
 
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install portunus
+
 ```
 rails generate portunus:install
 ```
 
-## Configuration
+### Adaptors
 
-Portunus comes with two adaptors to access keys. 
+Portunus comes with two adaptors to access keys out of the box.
 - Portunus::MasterKeys::EnvironmentAdapter
 - Portunus::MasterKeys::CredentialsAdapter
 
-If you have your key encryption keys stored in a custom HSM or other solution, you can write your own adaptor and register it to portunus to retrieve your master keys (or send the data encryption key to be encrypted)
+If you have your key encryption keys stored in a custom HSM or other solution, 
+you can write your own adaptor and register it to portunus to retrieve your 
+master keys (or send the data encryption key to be encrypted)
 
 ### EnvironmentAdaptor
 This is for getting keys from the environment. It is important to prefix the 
@@ -64,14 +76,6 @@ Rails.application.credentials.portunus[:master_key_1]
 ```
 
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install portunus
-
 ## Usage
 
 #### Devise notes
@@ -87,21 +91,31 @@ point to help assist and make it easier for developers using the gem.
 
 ## Development
 
-TODO: add field generator `t.portunus :name_of_field_to_encrypt`
-TODO: add gem dependencies, AES, Rails
+After checking out the repo, run `bin/setup` to install dependencies. You can 
+also run `bin/console` for an interactive prompt that will allow you to 
+experiment.
 
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. 
+To release a new version, update the version number in `version.rb`, and then 
+run `bundle exec rake release`, which will create a git tag for the version, 
+push git commits and tags, and push the `.gem` file 
+to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/portunus. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at 
+https://github.com/colinpetruno/portunus. This project is intended to be a 
+safe, welcoming space for collaboration, and contributors are expected to 
+adhere to the [Contributor Covenant](http://contributor-covenant.org) code of 
+conduct.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of 
+the [MIT License](https://opensource.org/licenses/MIT).
 
 ## Code of Conduct
 
-Everyone interacting in the Portunus project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/portunus/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Portunus project’s codebases, issue trackers, 
+chat rooms and mailing lists is expected to follow 
+the [code of conduct](https://github.com/[USERNAME]/portunus/blob/master/CODE_OF_CONDUCT.md).
