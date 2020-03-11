@@ -9,11 +9,26 @@ module Portunus
     end
 
     def generate
-      object.build_data_encryption_key(
-        encrypted_key: encrypted_key,
+      l_key = new_key
+
+      l_encrypted_key = ::Portunus.configuration.encrypter.encrypt(
+        key: master_encryption_key.value,
+        value: l_key
+      )
+
+      dek = object.build_data_encryption_key(
+        encrypted_key: l_encrypted_key,
         master_keyname: master_keyname,
         encryptable: object
       )
+
+      if dek.key != l_key
+        raise ::Portunus::Error.new(
+          "Dek Key creation failed: Decrypted key does not match the original"
+        )
+      end
+
+      dek
     end
 
     private
@@ -28,8 +43,7 @@ module Portunus
     end
 
     def new_key
-      new_key_l = ::Portunus.configuration.encrypter.generate_key
-      new_key_l
+      ::Portunus.configuration.encrypter.generate_key
     end
 
     def master_keyname

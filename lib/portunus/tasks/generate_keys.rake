@@ -3,9 +3,12 @@ namespace :portunus do
   task :generate_keys do
     adaptor_name = Portunus.configuration.storage_adaptor.to_s
 
-    if adaptor_name == "Portunus::MasterKeys::CredentialsAdaptor"
+    if adaptor_name == "Portunus::StorageAdaptors::Credentials"
       keys = (0..5).to_a.map do 
-        { "key": AES.key, "enabled": true }
+        { 
+          "key": ::Portunus.configuration.encrypter.generate_key, 
+          "enabled": true 
+        }
       end
 
       key_hash = keys.inject({}) do |hash, key|

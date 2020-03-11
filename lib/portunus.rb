@@ -1,4 +1,3 @@
-require "aes"
 require "portunus/version"
 require "generators/install_generator.rb"
 require "portunus/configuration"
