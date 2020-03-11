@@ -21,11 +21,15 @@ module Portunus
     attr_reader :object
 
     def encrypted_key
-      AES.encrypt(new_key, master_encryption_key.value)
+      encrypted_key_l = ::Portunus.configuration.encrypter.encrypt(
+        key: new_key, value: master_encryption_key.value
+      )
+      encrypted_key_l
     end
 
     def new_key
-      ::Portunus::Configuration.encrypter.generate_key
+      new_key_l = ::Portunus.configuration.encrypter.generate_key
+      new_key_l
     end
 
     def master_keyname

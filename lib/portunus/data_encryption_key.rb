@@ -4,8 +4,8 @@ module Portunus
 
     def key
       ::Portunus.configuration.encrypter.decrypt(
-        encrypted_key,
-        master_encryption_key.value
+        key: master_encryption_key.value,
+        value: encrypted_key
       )
     end
 

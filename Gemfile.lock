@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    portunus (0.2.0)
+    portunus (0.2.1)
       aes
+      openssl (>= 2.1.0)
       rails (>= 5.0.0)
 
 GEM
@@ -73,6 +74,7 @@ GEM
       activesupport (>= 4.2.0)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
+    ipaddr (1.2.2)
     loofah (2.4.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -88,6 +90,8 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
+    openssl (2.1.2)
+      ipaddr
     rack (2.2.2)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)

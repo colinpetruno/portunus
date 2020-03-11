@@ -9,7 +9,7 @@ module Portunus
         key_names = Rails.application.credentials.config.portunus.keys
 
         key_names.map do |key_name|
-          ::Portunus::Configuration.add_key(key_name)
+          ::Portunus.configuration.add_key(key_name)
         end
       end
 

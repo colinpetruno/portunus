@@ -22,7 +22,7 @@ module Portunus
               decrypted_value = ::Portunus.
                 configuration.
                 encrypter.
-                decrypt(value, dek.key)
+                decrypt(value: value, key: dek.key)
 
               # by naming encrypted fields with their type we can force a
               # conversion to the proper type after it's decrypted.
@@ -45,6 +45,9 @@ module Portunus
             result = super()
 
             if result.blank?
+              # self here is the model including encryptable. We pass this
+              # so we can call the rails build_data_encryption_key on the
+              # model and set up polymorphic columns automatically
               dek = ::Portunus::DataKeyGenerator.generate(self)
               dek
             else
@@ -56,10 +59,11 @@ module Portunus
           define_method "#{field}=" do |value, &block|
             if value.present?
               dek = data_encryption_key
+
               encrypted_value = ::Portunus.
                 configuration.
                 encrypter.
-                encrypt(value.to_s, dek.key)
+                encrypt(value: value, key: dek.key)
             end
 
             super(encrypted_value)
@@ -74,7 +78,7 @@ module Portunus
               value = ::Portunus.
                 configuration.
                 encrypter.
-                decrypt(value, dek.key)
+                decrypt(value: value, key: dek.key)
             end
 
             return value
