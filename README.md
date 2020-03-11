@@ -1,5 +1,7 @@
 # Portunus
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/8370f4feb43195c73150/maintainability)](https://codeclimate.com/github/colinpetruno/portunus/maintainability)[![Test Coverage](https://api.codeclimate.com/v1/badges/8370f4feb43195c73150/test_coverage)](https://codeclimate.com/github/colinpetruno/portunus/test_coverage)
+
 Portunus is an opininated encryption engine built for Ruby on Rails 
 applications. It utilizes a KEK (Key Encryption Key) & DEK (Data
 Encryption Key) scheme. 
