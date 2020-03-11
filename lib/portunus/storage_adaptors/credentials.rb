@@ -6,7 +6,7 @@ module Portunus
       end
 
       def self.load
-        key_names = Rails.application.credentials.config.portunus.keys
+        key_names = Rails.application.credentials.portunus.keys
 
         key_names.map do |key_name|
           ::Portunus.configuration.add_key(key_name)

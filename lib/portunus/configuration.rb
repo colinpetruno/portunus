@@ -1,6 +1,6 @@
 module Portunus
   class Configuration
-    attr_reader :master_key_names, :storage_adaptor, :encrypter,
+    attr_reader :storage_adaptor, :encrypter,
                 :max_key_duration
 
     def initialize
@@ -26,6 +26,25 @@ module Portunus
 
     def keys_loaded?
       @keys_loaded
+    end
+
+    def reset_master_keys
+      # Clear all master keys to empty, used for testing
+      @master_key_names = []
+      @keys_loaded = false
+    end
+
+    def reload_master_keys
+      # Perform a reload on the master keys. This is used in tests and to
+      # add new keys into the environment without rebooting the app.
+      @master_key_names = []
+      load_keys
+    end
+
+    def master_key_names
+      load_keys unless keys_loaded?
+
+      @master_key_names
     end
   end
 end
