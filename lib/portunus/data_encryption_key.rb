@@ -3,7 +3,10 @@ module Portunus
     belongs_to :encryptable, polymorphic: true
 
     def key
-      AES.decrypt(encrypted_key, master_encryption_key.value)
+      ::Portunus.configuration.encrypter.decrypt(
+        encrypted_key,
+        master_encryption_key.value
+      )
     end
 
     private

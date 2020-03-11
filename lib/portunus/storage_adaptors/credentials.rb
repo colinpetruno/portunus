@@ -16,6 +16,7 @@ module Portunus
       # Required method
       def self.lookup(key_name)
         master_key = Rails.application.credentials.portunus[key_name.to_sym]
+
         MasterKey.new(
           enabled: master_key[:enabled],
           name: key_name,

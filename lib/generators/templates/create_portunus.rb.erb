@@ -5,6 +5,8 @@ class CreatePortunus < ActiveRecord::Migration<%= migration_version %>
       t.string :master_keyname, null: false
       t.string :encryptable_type, null: false
       t.integer :encryptable_id, null: false
+      t.datetime :last_dek_rotation
+      t.datetime :last_kek_rotation
       t.timestamps
     end
 
@@ -13,6 +15,14 @@ class CreatePortunus < ActiveRecord::Migration<%= migration_version %>
       [:encryptable_id, :encryptable_type],
       unique: true,
       name: "portunus_dek_on_encryptable_id_and_encryptable_type"
+    )
+    add_index(
+      :portunus_data_encryption_keys,
+      :last_dek_rotation
+    )
+    add_index(
+      :portunus_data_encryption_keys,
+      :last_kek_rotation
     )
   end
 end

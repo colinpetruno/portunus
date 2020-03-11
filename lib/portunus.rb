@@ -8,8 +8,9 @@ require "portunus/data_key_generator"
 require "portunus/hasher"
 require "portunus/master_key"
 require "portunus/master_key_finder"
-require "portunus/master_keys/credentials_adaptor"
-require "portunus/master_keys/environment_adaptor"
+require "portunus/storage_adaptors/credentials"
+require "portunus/storage_adaptors/environment"
+require "portunus/encrypters/open_ssl_aes"
 
 
 module Portunus

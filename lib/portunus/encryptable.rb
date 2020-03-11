@@ -19,7 +19,10 @@ module Portunus
 
             if value.present?
               dek = data_encryption_key
-              decrypted_value = AES.decrypt(value, dek.key)
+              decrypted_value = ::Portunus.
+                configuration.
+                encrypter.
+                decrypt(value, dek.key)
 
               # by naming encrypted fields with their type we can force a
               # conversion to the proper type after it's decrypted.
@@ -53,7 +56,10 @@ module Portunus
           define_method "#{field}=" do |value, &block|
             if value.present?
               dek = data_encryption_key
-              encrypted_value = AES.encrypt(value.to_s, dek.key)
+              encrypted_value = ::Portunus.
+                configuration.
+                encrypter.
+                encrypt(value.to_s, dek.key)
             end
 
             super(encrypted_value)
@@ -65,7 +71,10 @@ module Portunus
 
             if encrypted && value.present?
               dek = data_encryption_key
-              value = AES.decrypt(value, dek.key)
+              value = ::Portunus.
+                configuration.
+                encrypter.
+                decrypt(value, dek.key)
             end
 
             return value

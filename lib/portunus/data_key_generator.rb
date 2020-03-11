@@ -25,7 +25,7 @@ module Portunus
     end
 
     def new_key
-      AES.key
+      ::Portunus::Configuration.encrypter.generate_key
     end
 
     def master_keyname

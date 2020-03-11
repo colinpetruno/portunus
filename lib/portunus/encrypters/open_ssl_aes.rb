@@ -5,6 +5,10 @@ module Portunus
         new(key: key, value: value).encrypt
       end
 
+      def self.generate_key
+        AES.key
+      end
+
       def self.decrypt(key:, value:)
         new(key: key, value: value).decrypt
       end
