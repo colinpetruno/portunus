@@ -64,18 +64,11 @@ module Portunus
 
         if value.present?
           dek = data_encryption_key
-          decrypted_value = ::Portunus.
+
+          ::Portunus.
             configuration.
             encrypter.
             decrypt(value: value, key: dek.key)
-
-          # by naming encrypted fields with their type we can force a
-          # conversion to the proper type after it's decrypted.
-          if l_field.to_s.include?("_date")
-            Date.parse(decrypted_value)
-          else
-            decrypted_value
-          end
         else
           nil
         end

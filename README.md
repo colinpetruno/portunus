@@ -23,16 +23,8 @@ You will need to add Portunus and the latest commit of the AES gem. This is
 due to fixing an openssl deprecation that has not yet been added as a new
 release in Ruby Gems. 
 
-https://github.com/chicks/aes/issues/15
-
 ```ruby
 gem "portunus"
-
-gem(
-  "aes", 
-  git: "git@github.com:chicks/aes.git", 
-  ref: "001f77806a2cbef513315993e19a8f679f8f5786"
-)
 ```
 
 And then execute:
@@ -43,9 +35,63 @@ Or install it yourself as:
 
     $ gem install portunus
 
+Run the generator. This will create the required Portunus tables.
 ```
 rails generate portunus:install
+rails db:migrate
 ```
+
+Include the encryptable module on any of your models or add it to 
+`ApplicationRecord` to ensure all your models have access to field encryption.
+```ruby
+include Portunus::Encryptable
+```
+
+### Devise notes
+
+If you are using devise it will by default downcase email addresses. If this
+field is encrypted the downcasing performed by devise happens after the 
+portunus encryption. Thus it will make the value unencrypted. 
+
+For now you can turn this off in the devise initializer by updating 
+`case_insensitive_keys`. You will then need to manage yourself prior to setting
+the email. There could be a similar config option added to portunus at some
+point to help assist and make it easier for developers using the gem.
+
+
+
+#### Basic Configuration
+
+To enable encryption on a column, add the `encrypted_fields` method in the 
+model and give it the fields you want to encrypt.
+```ruby
+class Member < ApplicationRecord
+  encrypted_fields :email
+end
+```
+
+#### Hashing
+
+Encrypted data cannot be searched. Portunus provides an automatic hash 
+mechanism for encrypted data. The hashing happens prior to validation on the
+model and will take your encrypted_field and put it into a column with a name
+of `hashed_encrypted_field`. 
+
+For instance, a migration for this may look like. 
+```
+create_table :members do |t|
+  t.string :hashed_email, null: false
+  t.string :email, null: false
+end
+```
+
+and the model:
+```ruby
+class Member < ApplicationRecord
+  encrypted_fields :email
+end
+```
+
 
 ### Adaptors
 
@@ -78,18 +124,15 @@ Rails.application.credentials.portunus[:master_key_1]
 ```
 
 
-## Usage
+### Tips
 
-#### Devise notes
+### Improvements
 
-If you are using devise it will by default downcase email addresses. If this
-field is encrypted the downcasing performed by devise happens after the 
-portunus encryption. Thus it will make the value unencrypted. 
-
-For now you can turn this off in the devise initializer by updating 
-`case_insensitive_keys`. You will then need to manage yourself prior to setting
-the email. There could be a similar config option added to portunus at some
-point to help assist and make it easier for developers using the gem.
+Some items I'd like to see added:
+- Migration support from an unencrypted to encrypted column
+- Google Cloud HSM Encrypter
+- Improve key rotations
+- Research better devise solution. 
 
 ## Development
 

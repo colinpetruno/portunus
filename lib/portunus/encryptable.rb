@@ -10,9 +10,6 @@ module Portunus
       def encrypted_fields(*fields)
         fields.map do |field|
           ::Portunus::FieldConfigurer.for(self, field)
-
-
-
         end
       end
     end
