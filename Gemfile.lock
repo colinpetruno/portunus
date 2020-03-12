@@ -168,7 +168,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.17)
+  bundler (> 1.17)
   portunus!
   pry-rails
   pry-stack_explorer
