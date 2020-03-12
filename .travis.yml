@@ -1,8 +1,14 @@
+addons:
+  code_climate:
+    repo_token: f40f50c1b06c16f8e703b01facaf313bcd0a7aa56100b9b077648607ca050833
+cache:
+  bundler: true
 language: ruby
 rvm:
   - 2.5
   - 2.6
   - 2.7
 script:
-  - gem install bundler
   - bundle exec rspec spec/
+after_success:
+  - bundle exec codeclimate-test-reporter
