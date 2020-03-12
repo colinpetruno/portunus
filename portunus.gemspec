@@ -45,4 +45,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry-rails"
   spec.add_development_dependency "pry-stack_explorer"
   spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "codeclimate-test-reporter"
 end

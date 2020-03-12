@@ -68,6 +68,8 @@ GEM
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
     builder (3.2.4)
+    codeclimate-test-reporter (1.0.7)
+      simplecov
     coderay (1.1.2)
     concurrent-ruby (1.1.6)
     crass (1.0.6)
@@ -174,6 +176,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (> 1.17)
+  codeclimate-test-reporter
   portunus!
   pry-rails
   pry-stack_explorer
