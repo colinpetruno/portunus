@@ -176,6 +176,3 @@ DEPENDENCIES
   rake (> 12.3.3)
   rspec
   sqlite3
-
-BUNDLED WITH
-   1.17.2
