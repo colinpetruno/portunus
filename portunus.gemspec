@@ -44,6 +44,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "pry-rails"
   spec.add_development_dependency "pry-stack_explorer"
-  spec.add_development_dependency "simplecov"
+  # simplecov 18 is incompatible with test reporter
+  # https://github.com/codeclimate/test-reporter/issues/413
+  spec.add_development_dependency "simplecov", "~> 0.17.1"
   spec.add_development_dependency "codeclimate-test-reporter"
 end
