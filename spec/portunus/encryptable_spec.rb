@@ -18,12 +18,12 @@ describe ::Portunus::Encrypters::OpenSslAes do
   describe "after a validation error" do
     it "should still read the field correctly" do
       user = User.new
+      user.firstname = "pascal"
       user.email = "testemail@example.com"
-      user.firstname = "Pascal"
 
       expect(user.valid?).to eql(false)
       expect(user.email).to eql("testemail@example.com")
-      expect(user.firstname).to eql("Pascal")
+      expect(user.firstname).to eql("pascal")
     end
   end
 end

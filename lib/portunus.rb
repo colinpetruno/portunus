@@ -11,7 +11,13 @@ require "portunus/master_key_finder"
 require "portunus/storage_adaptors/credentials"
 require "portunus/storage_adaptors/environment"
 require "portunus/encrypters/open_ssl_aes"
-
+require "portunus/type_casters/boolean"
+require "portunus/type_casters/date"
+require "portunus/type_casters/date_time"
+require "portunus/type_casters/integer"
+require "portunus/type_casters/float"
+require "portunus/type_casters/string"
+require "portunus/type_caster"
 
 module Portunus
   require "portunus/railtie" if defined?(Rails)

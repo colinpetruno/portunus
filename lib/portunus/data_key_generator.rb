@@ -1,24 +1,23 @@
 module Portunus
   class DataKeyGenerator
-    def self.generate(object)
-      new(object: object).generate
+    def self.generate(encrypted_object)
+      new(encrypted_object: encrypted_object).generate
     end
 
     def initialize(
-      object:,
+      encrypted_object:,
       encrypter: ::Portunus.configuration.encrypter,
       key_finder: ::Portunus::MasterKeyFinder
     )
       @encrypter = encrypter
       @key_finder = key_finder
-      @object = object
+      @encrypted_object = encrypted_object
     end
 
     def generate
-      dek = object.build_data_encryption_key(
+      dek = encrypted_object.build_data_encryption_key(
         encrypted_key: new_encrypted_key,
-        master_keyname: master_keyname,
-        encryptable: object
+        master_keyname: master_keyname
       )
 
       if dek.key != new_plaintext_key
@@ -32,7 +31,7 @@ module Portunus
 
     private
 
-    attr_reader :object, :encrypter, :key_finder
+    attr_reader :encrypted_object, :encrypter, :key_finder
 
     def new_encrypted_key
       @_new_encrypted_key ||= encrypter.encrypt(

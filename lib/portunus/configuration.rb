@@ -1,7 +1,6 @@
 module Portunus
   class Configuration
-    attr_reader :storage_adaptor, :encrypter,
-                :max_key_duration
+    attr_reader :storage_adaptor, :encrypter, :max_key_duration
 
     def initialize
       @storage_adaptor = ::Portunus::StorageAdaptors::Credentials

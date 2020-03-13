@@ -1,6 +1,6 @@
 namespace :portunus do
   desc "Output master keys for use with Portunus"
-  task :generate_keys do
+  task :generate_master_keys do
     adaptor_name = Portunus.configuration.storage_adaptor.to_s
 
     if adaptor_name == "Portunus::StorageAdaptors::Credentials"

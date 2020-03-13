@@ -5,8 +5,16 @@ module Portunus
     end
 
     def initialize(object:, field:)
+      require "pry"
       @object = object
-      @field = field
+
+      if field.is_a?(Hash)
+        @field = field.keys.first.to_sym
+        @field_options = default_field_options.merge(field[field.keys.first])
+      else
+        @field = field
+        @field_options = default_field_options
+      end
     end
 
     def setup
@@ -22,7 +30,13 @@ module Portunus
 
     private
 
-    attr_accessor :field, :object
+    attr_accessor :field, :field_options, :object
+
+    def default_field_options
+      {
+        type: :string
+      }
+    end
 
     def instance_methods_for_model
       [
@@ -40,6 +54,8 @@ module Portunus
     end
 
     def define_setter
+      l_field_options = field_options
+
       # Override the setter of the field to do the encryption
       object.define_method "#{field}=" do |value, &block|
         if value.present?
@@ -48,7 +64,13 @@ module Portunus
           encrypted_value = ::Portunus.
             configuration.
             encrypter.
-            encrypt(value: value, key: dek.key)
+            encrypt(
+              value: Portunus::TypeCaster.cast(
+                value: value,
+                type: l_field_options[:type]
+              ),
+              key: dek.key
+            )
         end
 
         super(encrypted_value)
@@ -58,6 +80,7 @@ module Portunus
     def define_getter
       # This is required to force the proper scope in this context.
       l_field = field
+      l_field_options = field_options
 
       object.define_method(l_field.to_sym) do
         value = read_attribute(l_field.to_sym)
@@ -65,10 +88,15 @@ module Portunus
         if value.present?
           dek = data_encryption_key
 
-          ::Portunus.
+          decrypted_value = ::Portunus.
             configuration.
             encrypter.
             decrypt(value: value, key: dek.key)
+
+          Portunus::TypeCaster.uncast(
+            value: decrypted_value,
+            type: l_field_options[:type]
+          )
         else
           nil
         end
@@ -76,16 +104,23 @@ module Portunus
     end
 
     def define_before_type_cast
+      l_field_options = field_options
+
       object.define_method "#{field}_before_type_cast" do
         value = super()
         encrypted = self.class.encrypted_fields_list.include?(field.to_sym)
 
         if encrypted && value.present?
           dek = data_encryption_key
-          value = ::Portunus.
+          decrypted_value = ::Portunus.
             configuration.
             encrypter.
             decrypt(value: value, key: dek.key)
+
+          value = Portunus::Typecaster.uncast(
+            value: decrypted_value,
+            type: l_field_options[:type]
+          )
         end
 
         return value

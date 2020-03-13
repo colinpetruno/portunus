@@ -10,10 +10,8 @@ require "rails/all"
 require "portunus"
 require_relative "./models/user"
 
-
 # require "dummy/application"
 # Dummy::Application.initialize!
-#
 
 require "rails"
 require "active_model/railtie"

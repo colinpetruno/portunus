@@ -2,7 +2,7 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/8370f4feb43195c73150/maintainability)](https://codeclimate.com/github/colinpetruno/portunus/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/8370f4feb43195c73150/test_coverage)](https://codeclimate.com/github/colinpetruno/portunus/test_coverage) [![Build Status](https://travis-ci.org/colinpetruno/portunus.svg?branch=master)](https://travis-ci.org/colinpetruno/portunus)
 
-Portunus is an opininated encryption engine built for Ruby on Rails 
+Portunus is an opininated, object-oriented encryption engine built for Ruby on Rails 
 applications. It utilizes a KEK (Key Encryption Key) & DEK (Data
 Encryption Key) scheme. 
 
@@ -17,15 +17,21 @@ Lastly, Portnus has scripts included to do automatic rotation of these keys.
 It's important to rotate both master keys and data encryption keys. Scripts
 are included for both of these that can be scheduled via cron. 
 
+## Background
+Privacy and security need to be considered from the very start of building an
+application. While web development has gotten more accessible, application
+security has not. Portunus is intended to be a drop in utility that requires
+just minutes of set up to ensure your app is using a DEK and KEK encryption 
+key to protect your database from several types of attacks. If you want to 
+go futher, it's easily extensible for your custom solution.  
+
 ## Installation
 
-You will need to add Portunus and the latest commit of the AES gem. This is
-due to fixing an openssl deprecation that has not yet been added as a new
-release in Ruby Gems. 
+### Install the gem
 
-```ruby
-gem "portunus"
-```
+
+    $ gem "portunus"
+
 
 And then execute:
 
@@ -36,41 +42,68 @@ Or install it yourself as:
     $ gem install portunus
 
 Run the generator. This will create the required Portunus tables.
-```
-rails generate portunus:install
-rails db:migrate
-```
+
+    $ rails generate portunus:install
+    $ rails db:migrate
 
 Include the encryptable module on any of your models or add it to 
 `ApplicationRecord` to ensure all your models have access to field encryption.
+
 ```ruby
 include Portunus::Encryptable
 ```
 
-### Devise notes
+### Set up your master keys
+Portunus comes with two adaptors for your master keys, "credentials" and 
+"environment". This should cover the most common deploy scenarios. Before
+Portunus can function, enabled master keys need to be added. There is a 
+generator to create the keys for you to then install in the proper 
+location.
 
-If you are using devise it will by default downcase email addresses. If this
-field is encrypted the downcasing performed by devise happens after the 
-portunus encryption. Thus it will make the value unencrypted. 
+    $ bundle exec rake portunus:generate_master_keys
 
-For now you can turn this off in the devise initializer by updating 
-`case_insensitive_keys`. You will then need to manage yourself prior to setting
-the email. There could be a similar config option added to portunus at some
-point to help assist and make it easier for developers using the gem.
+### Additional devise notes
+
+There is additional configuration required if you are using devise and 
+desire to encrypt your email column. Devise will by default downcase email 
+addresses. The downcasing performed by devise happens after the portunus 
+encryption and result in broken encrypted values. This behaviour needs to 
+be disabled from devise and you will need to handle the downcasing prior 
+to encryption.  
 
 
 
-#### Basic Configuration
+## Basic Configuration
 
 To enable encryption on a column, add the `encrypted_fields` method in the 
 model and give it the fields you want to encrypt.
+
 ```ruby
 class Member < ApplicationRecord
   encrypted_fields :email
 end
 ```
 
-#### Hashing
+### Type casting
+In order to provide a simpler implementation in your app, Portunus has type casting support. The encrypted data must be stored as strings. To utilize Portunus with different types, you may specify the type on the field. 
+
+```ruby
+class User < ApplicationRecord
+  encrypted_fields :email, :firstname, birthdate: { type: :date }
+end
+```
+
+#### Supported types
+- Boolean (:boolean)
+- Date (:date)
+- DateTime (:datetime)
+- Float (:float)
+- Integer (:integer)
+- String (:string) (default)
+
+
+
+### Hashing
 
 Encrypted data cannot be searched. Portunus provides an automatic hash 
 mechanism for encrypted data. The hashing happens prior to validation on the
@@ -78,7 +111,8 @@ model and will take your encrypted_field and put it into a column with a name
 of `hashed_encrypted_field`. 
 
 For instance, a migration for this may look like. 
-```
+
+```ruby
 create_table :members do |t|
   t.string :hashed_email, null: false
   t.string :email, null: false
@@ -86,22 +120,65 @@ end
 ```
 
 and the model:
+
 ```ruby
 class Member < ApplicationRecord
   encrypted_fields :email
 end
 ```
 
+#### Portunus::Hasher
+There is a class provided to perform the hashing that you can utilize to look up date.
 
-### Adaptors
+```ruby
+  User.find_by(email: ::Portunus::Hasher.for(params[:email])
+```
 
-Portunus comes with two adaptors to access keys out of the box.
-- Portunus::MasterKeys::EnvironmentAdapter
-- Portunus::MasterKeys::CredentialsAdapter
+## Advanced Setup
 
-If you have your key encryption keys stored in a custom HSM or other solution, 
-you can write your own adaptor and register it to portunus to retrieve your 
-master keys (or send the data encryption key to be encrypted)
+### Configuration block
+Portunus can be easily customized using a configuration initializer.
+
+```ruby
+Portunus.configuration do |config|
+  config.storage_adaptor = Portunus::StorageAdaptors::Credentials
+  config.encrypter = Portunus::Encrypters::OpenSslAes
+  config.max_key_duration = 1.month 
+end
+```
+
+#### Options
+- `storage_adaptor` - This is finds and looks up master keys.
+- `encrypter` - This is responsible for setting the encrypter that encrypts
+  decrypts the data. 
+- `max_key_duration` - Timeframe for how old you want to allow keys to exist for. 
+  Ideally your keys are constantly being rotated. Used in key rotation tasks. 
+
+## Storage adaptors
+
+Storage adaptors provide the interface to determine which master key to decrypt
+a data key. Portunus comes with two adaptors to access master keys out of the box.
+
+- Portunus::StorageAdaptors::Environment
+- Portunus::StorageAdaptors::Credentials
+
+We need to keep track of the following items:
+
+- **Key name** - This is what is stored on the data encryption key table to find the
+  master key
+- **Enabled** - Whether the key is enabled for new data keys. Note: If you disable a 
+  key, that just stops future keys from generating. Until all the keys are rotated,
+  do not remove the key. 
+- **Created date** - When the key was created to help track rotation duration
+
+The master key id is stored on the data key table. These adaptors work like hash
+maps. The key id is passed and a value is returned. The value for both default
+adaptors is the master key. However if you were writing for an environment where keys
+are stored inside an HSM the value could be the key id in the HSM. The encrypter
+would then take that key id and interface with the HSM. 
+
+Adaptors are easily registered in the config so you can take an existing one 
+and customize to your requirements. 
 
 ### EnvironmentAdaptor
 This is for getting keys from the environment. It is important to prefix the 
@@ -115,30 +192,51 @@ PORTUNUS_MASTER_KEY_1_ENABLED=false
 TODO: Rotation script should find disabled keys and force rotation to a new
 key 
 
-### Credentials adaptor
-This gets your master keys from your rails credential files. It does this by
-looking for 
+### Credentials adaptor (default)
+This gets your master keys from your rails credential files. An example 
+structure is:
 
+```yaml
+portunus:
+  f9e59a8c17c5f430f17745a522ebc2b7:
+    key: 93a05a5ce18afb85162a34d552c953b3
+    enabled: true
+    created_at: "2020-03-13T12:11:11+01:00"
+  140f33e69f0647cbc14b64605f002ff6:
+    key: d2c2aa9b7aeff75513ca24efcd8b8dd3
+    enabled: true
+    created_at: "2020-03-13T12:11:11+01:00"
 ```
-Rails.application.credentials.portunus[:master_key_1]
-```
 
+## Key rotation
+Portunus provides key rotation scripts to rotate DEKs, KEKs, and both at 
+once. These can be scheduled on a regular basis to constantly be rotating
+keys within the app. Alternatively they can be rotated all at once. 
 
-### Tips
+## Tips
+Remember security is about applying layers. Using Portunus with the default 
+config helps protects against specific types of attacks. However, in the 
+event your complete environment is compromised there is not much that can
+be done. 
 
-### Improvements
+Providing seperation of concerns within your organization can help if you
+need the data to survive even if someone gets direct server access. Every 
+aspect of Portunus is easily configured to ensure this is possible for you.
+
+## Improvements
 
 Some items I'd like to see added:
 - Migration support from an unencrypted to encrypted column
 - Google Cloud HSM Encrypter
 - Improve key rotations
-- Research better devise solution. 
+- Research better devise solution.
+- Different encrypters or key sources for different data rows 
+- Dashboard to show key usage and which keys can be removed
+- Automatic master key introduction and rotation
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. You can 
-also run `bin/console` for an interactive prompt that will allow you to 
-experiment.
+After checking out the repo, run `bundle install to install dependencies. 
 
 To install this gem onto your local machine, run `bundle exec rake install`. 
 To release a new version, update the version number in `version.rb`, and then 

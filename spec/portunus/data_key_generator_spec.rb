@@ -15,7 +15,7 @@ describe Portunus::DataKeyGenerator do
 
       expect(::Portunus::DataKeyGenerator).
         to receive(:new).
-        with(object: user).
+        with(encrypted_object: user).
         and_return(mock)
 
       expect(mock).to receive(:generate).once
@@ -59,7 +59,7 @@ describe Portunus::DataKeyGenerator do
 
     it "calls the encrypter to encrypt the key" do
       generator = ::Portunus::DataKeyGenerator.new(
-        object: user
+        encrypted_object: user
       )
 
       master_key = generator.send(:master_encryption_key)
@@ -84,14 +84,14 @@ describe Portunus::DataKeyGenerator do
         and_return(::Portunus::Encrypters::OpenSslAes.generate_key)
 
       ::Portunus::DataKeyGenerator.new(
-        object: user
+        encrypted_object: user
       ).generate
     end
 
     it "will raise an error if encrypting the key fails" do
       user = User.new
       generator = ::Portunus::DataKeyGenerator.new(
-        object: user
+        encrypted_object: user
       )
       master_key = generator.send(:master_encryption_key)
       encrypted_key = ::Portunus::Encrypters::OpenSslAes.encrypt(
