@@ -27,7 +27,7 @@ module Portunus
         elsif value == "false"
           false
         else
-          ::Portunus::Error.new("Invalid boolean value")
+          raise ::Portunus::Error.new("Invalid boolean value")
         end
       end
 

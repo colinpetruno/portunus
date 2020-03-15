@@ -1,6 +1,7 @@
 require "simplecov"
 SimpleCov.start do
   add_filter "spec"
+  add_filter "lib/portunus/railtie.rb"
 end
 
 require "bundler/setup"
@@ -19,6 +20,9 @@ require "active_job/railtie"
 require "action_controller/railtie"
 require "action_view/railtie"
 require "pry-rails"
+
+# Load environment variables in order to test the environment adaptor
+require_relative "./support/environment_configuration"
 
 module Dummy
   class Application < Rails::Application

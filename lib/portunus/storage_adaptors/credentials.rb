@@ -2,7 +2,7 @@ module Portunus
   module StorageAdaptors
     class Credentials
       def self.for(data_encryption_key)
-        new(data_encryption_key).find
+        self.lookup(data_encryption_key.master_keyname)
       end
 
       def self.load
@@ -20,7 +20,8 @@ module Portunus
         MasterKey.new(
           enabled: master_key[:enabled],
           name: key_name,
-          value: master_key[:key]
+          value: master_key[:key],
+          created_at: master_key[:created_at]
         )
       rescue StandardError
         raise ::Portunus::Error.new("Portunus: Master key not found")
@@ -40,17 +41,6 @@ module Portunus
         end
 
         key_names
-      end
-
-      def initialize(data_encryption_key)
-        @data_encryption_key = data_encryption_key
-      end
-
-      def find
-        Rails.
-          application.
-          credentials.
-          portunus_master_keys[data_encryption_key.master_keyname.to_sym]
       end
     end
   end

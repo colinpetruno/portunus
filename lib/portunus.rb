@@ -7,7 +7,6 @@ require "portunus/data_key_generator"
 require "portunus/field_configurer"
 require "portunus/hasher"
 require "portunus/master_key"
-require "portunus/master_key_finder"
 require "portunus/storage_adaptors/credentials"
 require "portunus/storage_adaptors/environment"
 require "portunus/encrypters/open_ssl_aes"
@@ -28,7 +27,6 @@ module Portunus
 
     yield(@@configuration)
   end
-
   def self.configuration
     @@configuration ||= ::Portunus::Configuration.new
   end

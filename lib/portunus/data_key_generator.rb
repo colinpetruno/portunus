@@ -7,7 +7,7 @@ module Portunus
     def initialize(
       encrypted_object:,
       encrypter: ::Portunus.configuration.encrypter,
-      key_finder: ::Portunus::MasterKeyFinder
+      key_finder: Portunus.configuration.storage_adaptor
     )
       @encrypter = encrypter
       @key_finder = key_finder
@@ -45,7 +45,7 @@ module Portunus
     end
 
     def master_keyname
-      @_master_keyname ||= key_finder.random
+      @_master_keyname ||= key_finder.list.sample
     end
 
     def master_encryption_key

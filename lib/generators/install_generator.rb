@@ -11,7 +11,6 @@ module Portunus
       desc "Add the migrations for Porteus"
 
       def copy_migrations
-        # options["encryption_engine"]
         warn "Creating Migrations for Portunus Encryption"
         migration_template(
           "create_portunus.rb.erb",

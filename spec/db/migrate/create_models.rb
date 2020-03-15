@@ -3,6 +3,7 @@ class CreateModels < ActiveRecord::Migration[5.1]
     t.string "email", null: false
     t.string "firstname", null: false
     t.string "lastname", null: false
+    t.string "hashed_firstname", null: false
 
     t.timestamps
   end

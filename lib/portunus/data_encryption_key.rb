@@ -12,7 +12,7 @@ module Portunus
     private
 
     def master_encryption_key
-      @_master_encryption_key ||= ::Portunus::MasterKeyFinder.lookup(
+      @_master_encryption_key ||= Portunus.configuration.storage_adaptor.lookup(
         master_keyname.to_sym
       )
     end

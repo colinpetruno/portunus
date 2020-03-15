@@ -23,5 +23,12 @@ describe ::Portunus::TypeCasters::Boolean do
       expect(type_caster.uncast(value: "true")).to eql(true)
       expect(type_caster.uncast(value: "false")).to eql(false)
     end
+
+    it "should raise an error if it does not understand the decrypted value" do
+      type_caster = ::Portunus::TypeCasters::Boolean
+
+      expect{ type_caster.uncast(value: "not-valid") }.
+        to raise_error(Portunus::Error)
+    end
   end
 end

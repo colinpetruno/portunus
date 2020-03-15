@@ -49,6 +49,16 @@ describe Portunus::DataKeyGenerator do
       end
     end
 
+    it "raises an error if the encryption fails" do
+      generator = ::Portunus::DataKeyGenerator.new(
+        encrypted_object: user
+      )
+
+      expect(::Portunus.configuration.encrypter).
+        to receive(:decrypt).and_return("fake-encrypted-data")
+
+      expect{ generator.generate }.to raise_error(Portunus::Error)
+    end
 
     it "should return a valid dek" do
       key = ::Portunus::DataKeyGenerator.generate(user)
