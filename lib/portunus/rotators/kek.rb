@@ -5,28 +5,31 @@ module Portunus
         new(data_encryption_key).rotate
       end
 
+      def initialize(data_encryption_key)
+        @data_encryption_key = data_encryption_key
+        @unencrypted_dek = data_encryption_key.key
+      end
+
       def rotate
-        data_encryption_key.update(
-          master_keyname: new_master_key,
-          encrypted_key:
-          last_dek_rotation: DateTime.now
-        )
-        # find new master encryption key
-        # unencrypt the dek
-        # reencrypt dek with new master key
-        # save record
+        data_encryption_key.master_keyname = new_master_key_name
+        data_encryption_key.encrypted_key = encrypted_dek_with_new_master
+        data_encryption_key.last_kek_rotation = DateTime.now
+        data_encryption_key.save!
       end
 
       private
 
-      attr_reader :data_encryption_key
+      attr_reader :data_encryption_key, :unencrypted_dek
 
-      def original_key
-        @_original_key ||= data_encryption_key.key
+      def encrypted_dek_with_new_master
+        Portunus.configuration.encrypter.encrypt(
+          key: new_master_key.value,
+          value: unencrypted_dek
+        )
       end
 
       def new_master_key
-        @_new_master_key ||= ::Portunus::MasterKeyFinder.lookup(
+        @_new_master_key ||= ::Portunus.configuration.storage_adaptor.lookup(
           new_master_key_name.to_sym
         )
       end

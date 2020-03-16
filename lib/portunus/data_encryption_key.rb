@@ -9,6 +9,11 @@ module Portunus
       )
     end
 
+    def master_keyname=(new_key_value)
+      @_master_encryption_key = nil
+      super(new_key_value)
+    end
+
     private
 
     def master_encryption_key
