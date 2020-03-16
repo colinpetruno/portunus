@@ -7,7 +7,7 @@ module Portunus
       @encrypter = ::Portunus::Encrypters::OpenSslAes
       @keys_loaded = false
       @master_key_names = []
-      @max_key_duration = 1.month
+      @max_key_duration = 6.months
     end
 
     def load_keys

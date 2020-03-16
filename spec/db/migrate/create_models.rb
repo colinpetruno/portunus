@@ -4,6 +4,7 @@ class CreateModels < ActiveRecord::Migration[5.1]
     t.string "firstname", null: false
     t.string "lastname", null: false
     t.string "hashed_firstname", null: false
+    t.integer "login_count"
 
     t.timestamps
   end

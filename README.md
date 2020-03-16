@@ -16,7 +16,7 @@ not included due to the extensive variety of possible deployments.
 Lastly, Portnus has scripts included to do automatic rotation of these keys.
 It's important to rotate both master keys and data encryption keys. Scripts
 are included for both of these that can be scheduled via cron. 
-
+&nbsp;  
 ## Background
 Privacy and security need to be considered from the very start of building an
 application. While web development has gotten more accessible, application
@@ -24,7 +24,7 @@ security has not. Portunus is intended to be a drop in utility that requires
 just minutes of set up to ensure your app is using a DEK and KEK encryption 
 key to protect your database from several types of attacks. If you want to 
 go futher, it's easily extensible for your custom solution.  
-
+&nbsp;  
 ## Installation
 
 ### Install the gem
@@ -72,7 +72,7 @@ be disabled from devise and you will need to handle the downcasing prior
 to encryption.  
 
 
-
+&nbsp;  
 ## Basic Configuration
 
 To enable encryption on a column, add the `encrypted_fields` method in the 
@@ -84,8 +84,18 @@ class Member < ApplicationRecord
 end
 ```
 
+### Database level defaults
+
+Since the database does not have access to your encryption engine, default
+values will break the encryption. You need to ensure defaults for encrypted
+columns are set within your application logic.
+
+
 ### Type casting
-In order to provide a simpler implementation in your app, Portunus has type casting support. The encrypted data must be stored as strings. To utilize Portunus with different types, you may specify the type on the field. 
+
+In order to provide a simpler implementation in your app, Portunus has type 
+casting support. The encrypted data must be stored as strings. To utilize 
+Portunus with different types, you may specify the type on the field. 
 
 ```ruby
 class User < ApplicationRecord
@@ -133,7 +143,7 @@ There is a class provided to perform the hashing that you can utilize to look up
 ```ruby
   User.find_by(email: ::Portunus::Hasher.for(params[:email])
 ```
-
+&nbsp;  
 ## Advanced Setup
 
 ### Configuration block
@@ -152,15 +162,16 @@ end
 - `encrypter` - This is responsible for setting the encrypter that encrypts
   decrypts the data. 
 - `max_key_duration` - Timeframe for how old you want to allow keys to exist for. 
-  Ideally your keys are constantly being rotated. Used in key rotation tasks. 
+  Ideally your keys are constantly being rotated. Used in key rotation tasks.
 
+&nbsp;   
 ## Storage adaptors
 
 Storage adaptors provide the interface to determine which master key to decrypt
 a data key. Portunus comes with two adaptors to access master keys out of the box.
 
-- Portunus::StorageAdaptors::Environment
-- Portunus::StorageAdaptors::Credentials
+- **Portunus::StorageAdaptors::Environment**
+- **Portunus::StorageAdaptors::Credentials**
 
 We need to keep track of the following items:
 
@@ -181,16 +192,10 @@ Adaptors are easily registered in the config so you can take an existing one
 and customize to your requirements. 
 
 ### EnvironmentAdaptor
-This is for getting keys from the environment. It is important to prefix the 
-key with PORTUNUS, ie PORTUNUS_MASTER_KEY_1. 
+Store and manage keys through any environment. Great for deployments like 
+Heroku. The environment adaptor needs multiple keys per master key to track
+the key value, date created and enabled.  
 
-By default, it will assume the key is enabled. You can configure which keys
-are enabled in your configuration or via env var.
-
-PORTUNUS_MASTER_KEY_1_ENABLED=false
-
-TODO: Rotation script should find disabled keys and force rotation to a new
-key 
 
 ### Credentials adaptor (default)
 This gets your master keys from your rails credential files. An example 
@@ -207,25 +212,44 @@ portunus:
     enabled: true
     created_at: "2020-03-13T12:11:11+01:00"
 ```
-
+&nbsp;
 ## Key rotation
 Portunus provides key rotation scripts to rotate DEKs, KEKs, and both at 
-once. These can be scheduled on a regular basis to constantly be rotating
-keys within the app. Alternatively they can be rotated all at once. 
+once. The DEK rotation script will rotate keys every six months. If provided
+a force option as an environment variable it will rotate all the keys. The 
+KEK rotation will rotate all master keys. This will probably take a long time
+in many apps so therefore you can rotate the master keys invidually by 
+providing the key name. 
 
+
+    $ bundle exec rake portunus:rotate_deks
+    $ FORCE=true bundle exec rake portunus:rotate_deks
+    $ bundle exec rake portunus:rotate_keks
+    $ KEY_NAME=<keyname> bundle exec rake portunus:rotate_deks
+   
+&nbsp;  
 ## Tips
-Remember security is about applying layers. Using Portunus with the default 
-config helps protects against specific types of attacks. However, in the 
+- Security is about applying layers. Using Portunus with the default 
+configuration helps protects against specific types of attacks. However, in the 
 event your complete environment is compromised there is not much that can
 be done. 
-
-Providing seperation of concerns within your organization can help if you
+- Providing seperation of concerns within your organization can help if you
 need the data to survive even if someone gets direct server access. Every 
 aspect of Portunus is easily configured to ensure this is possible for you.
+- When deciding how many master keys to use, keep the amount of data in mind.
+  Each key is responsible for encrypting a certain number of DEKs. The lower
+  this is kept the easier it will be to rotate. 
+- Schedule rotation often. The dek rotator can be run every day or on even
+  smaller intervals. 
 
+
+
+
+&nbsp;  
 ## Improvements
 
 Some items I'd like to see added:
+
 - Migration support from an unencrypted to encrypted column
 - Google Cloud HSM Encrypter
 - Improve key rotations
@@ -234,6 +258,7 @@ Some items I'd like to see added:
 - Dashboard to show key usage and which keys can be removed
 - Automatic master key introduction and rotation
 
+&nbsp;  
 ## Development
 
 After checking out the repo, run `bundle install to install dependencies. 
@@ -243,7 +268,7 @@ To release a new version, update the version number in `version.rb`, and then
 run `bundle exec rake release`, which will create a git tag for the version, 
 push git commits and tags, and push the `.gem` file 
 to [rubygems.org](https://rubygems.org).
-
+&nbsp;  
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at 
@@ -251,12 +276,12 @@ https://github.com/colinpetruno/portunus. This project is intended to be a
 safe, welcoming space for collaboration, and contributors are expected to 
 adhere to the [Contributor Covenant](http://contributor-covenant.org) code of 
 conduct.
-
+&nbsp;  
 ## License
 
 The gem is available as open source under the terms of 
 the [MIT License](https://opensource.org/licenses/MIT).
-
+&nbsp;  
 ## Code of Conduct
 
 Everyone interacting in the Portunus project’s codebases, issue trackers, 

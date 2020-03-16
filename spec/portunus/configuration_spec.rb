@@ -8,7 +8,7 @@ describe ::Portunus::Configuration do
 
       expect(config.storage_adaptor).to eql(::Portunus::StorageAdaptors::Credentials)
       expect(config.encrypter).to eql(::Portunus::Encrypters::OpenSslAes)
-      expect(config.max_key_duration).to eql(1.month)
+      expect(config.max_key_duration).to eql(6.months)
       expect(config.master_key_names.length).to eql(6)
     end
   end
