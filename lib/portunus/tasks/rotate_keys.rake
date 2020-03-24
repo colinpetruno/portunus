@@ -1,20 +1,31 @@
 namespace :portunus do
-  desc "Output master keys for use with Portunus"
-  task :rotate_keks do
-    # In this task we need to go through each kek and find all it's deks and
-    # then rotate those to new, will attempt to rotate keks older than the max
-    # key duration
+  desc "Rotate KEK keys, reencrypt the deks"
+  task rotate_keks: :environment do
+    scope = ::Portunus::DataEncryptionKey.
+      where(
+        "last_kek_rotation < ? or (created_at < ? and last_kek_rotation is null", 
+        ::Portunus.configuration.max_key_duration,
+        ::Portunus.configuration.max_key_duration
+      )
 
+    scope.in_batches do |relation|
+      relation.map do |encryption_key|
+        ::Portunus::Rotators::Kek.for(encryption_key)
+      end
+    end
   end
 
-  task :rotate_deks do
+  desc "Rotate DEK keys, reencrypt the data"
+  task rotate_deks: :environment do
     if ENV["FORCE"] == "true"
       scope = ::Portunus::DataEncryptionKey.all
     else
       scope = ::Portunus::DataEncryptionKey.
         where(
           "last_dek_rotation < ? or (created_at < ? and last_dek_rotation is null", 
-          ::Portunus.configuration.max_key_duration)
+          ::Portunus.configuration.max_key_duration,
+          ::Portunus.configuration.max_key_duration
+        )
     end
     scope.in_batches do |relation|
       relation.map do |encryption_key|

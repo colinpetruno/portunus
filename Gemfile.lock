@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    portunus (0.2.1)
+    portunus (0.3.0)
       aes
       openssl (>= 2.1.0)
       rails (>= 5.0.0)
