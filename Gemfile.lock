@@ -185,6 +185,3 @@ DEPENDENCIES
   rspec
   simplecov (~> 0.17.1)
   sqlite3
-
-BUNDLED WITH
-   1.17.2
