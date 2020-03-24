@@ -1,8 +1,7 @@
 PATH
   remote: .
   specs:
-    portunus (0.3.0)
-      aes
+    portunus (0.3.1)
       openssl (>= 2.1.0)
       rails (>= 5.0.0)
 
@@ -64,7 +63,6 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2)
-    aes (0.5.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
     builder (3.2.4)
@@ -187,3 +185,6 @@ DEPENDENCIES
   rspec
   simplecov (~> 0.17.1)
   sqlite3
+
+BUNDLED WITH
+   1.17.2
