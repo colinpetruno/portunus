@@ -5,7 +5,6 @@ module Portunus
     end
 
     def initialize(object:, field:)
-      require "pry"
       @object = object
 
       if field.is_a?(Hash)
