@@ -54,13 +54,31 @@ include Portunus::Encryptable
 ```
 
 ### Set up your master keys
+
 Portunus comes with two adaptors for your master keys, "credentials" and 
 "environment". This should cover the most common deploy scenarios. Before
 Portunus can function, enabled master keys need to be added. There is a 
 generator to create the keys for you to then install in the proper 
-location.
+location. 
 
     $ bundle exec rake portunus:generate_master_keys
+    
+If you are using the credentials adaptor (default), add the keys here. 
+Make sure to generate keys for each environment.      
+    
+    $ bundle exec rails credentials:edit --environment=development
+
+#### Spring / Postgres / OSX
+
+When using this combination a bug may arise that prompts a weird error message:
+
+    $ objc[4182]: +[__NSPlaceholderDictionary initialize] may have been in progress in another thread when fork() was called.
+
+You can circumvent it by using the below command in High Sierra / Catalina. It 
+might not work in Mojave but I believe this issue unrelated to Portunus.
+Alternatively just don't use spring. 
+
+    $ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 ### Additional devise notes
 
