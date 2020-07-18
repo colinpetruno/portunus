@@ -1,12 +1,16 @@
 namespace :portunus do
   desc "Rotate KEK keys, reencrypt the deks"
   task rotate_keks: :environment do
-    scope = ::Portunus::DataEncryptionKey.
-      where(
-        "last_kek_rotation < ? or (created_at < ? and last_kek_rotation is null)", 
-        DateTime.now - ::Portunus.configuration.max_key_duration,
-        DateTime.now - ::Portunus.configuration.max_key_duration
-      )
+    if ENV["FORCE"] == "true"
+      scope = ::Portunus::DataEncryptionKey.all
+    else
+      scope = ::Portunus::DataEncryptionKey.
+        where(
+          "last_kek_rotation < ? or (created_at < ? and last_kek_rotation is null)", 
+          DateTime.now - ::Portunus.configuration.max_key_duration,
+          DateTime.now - ::Portunus.configuration.max_key_duration
+        )
+    end
 
     scope.in_batches do |relation|
       relation.map do |encryption_key|

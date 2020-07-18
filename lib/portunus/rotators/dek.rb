@@ -12,20 +12,24 @@ module Portunus
       def rotate
         encryptable = data_encryption_key.encryptable
 
-        encryptable.class.encrypted_fields_list.map do |field_name|
-          field_value_map[field_name.to_sym] = encryptable.send(field_name.to_sym)
-        end
-
-        data_encryption_key.encrypted_key = new_encrypted_key
-
-        field_value_map.map do |field_name, value|
-          encryptable.send("#{field_name}=".to_sym, value)
-        end
+        Rails.logger.debug(
+          "Rotating Encryptable: #{encryptable.class}, id: #{encryptable.id}"
+        )
 
         ActiveRecord::Base.transaction do
+          encryptable.class.encrypted_fields_list.map do |field_name|
+            field_value_map[field_name.to_sym] = encryptable.send(field_name.to_sym)
+          end
+
+          data_encryption_key.update(encrypted_key: new_encrypted_key)
+          encryptable.data_encryption_key.reload
+
+          field_value_map.map do |field_name, value|
+            encryptable.send("#{field_name}=".to_sym, value)
+          end
+
           encryptable.save
-          data_encryption_key.last_dek_rotation = DateTime.now
-          data_encryption_key.save
+          data_encryption_key.update(last_dek_rotation: DateTime.now)
         end
 
         true
