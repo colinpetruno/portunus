@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    portunus (0.3.1)
+    portunus (0.3.5)
       openssl (>= 2.1.0)
       rails (>= 5.0.0)
 
@@ -79,7 +79,6 @@ GEM
       activesupport (>= 4.2.0)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
-    ipaddr (1.2.2)
     json (2.3.0)
     loofah (2.4.0)
       crass (~> 1.0.2)
@@ -97,7 +96,6 @@ GEM
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
     openssl (2.1.2)
-      ipaddr
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -185,3 +183,6 @@ DEPENDENCIES
   rspec
   simplecov (~> 0.17.1)
   sqlite3
+
+BUNDLED WITH
+   2.1.4
