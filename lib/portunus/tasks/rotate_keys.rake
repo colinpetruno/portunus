@@ -4,8 +4,8 @@ namespace :portunus do
     scope = ::Portunus::DataEncryptionKey.
       where(
         "last_kek_rotation < ? or (created_at < ? and last_kek_rotation is null)", 
-        ::Portunus.configuration.max_key_duration,
-        ::Portunus.configuration.max_key_duration
+        DateTime.now - ::Portunus.configuration.max_key_duration,
+        DateTime.now - ::Portunus.configuration.max_key_duration
       )
 
     scope.in_batches do |relation|
@@ -23,8 +23,8 @@ namespace :portunus do
       scope = ::Portunus::DataEncryptionKey.
         where(
           "last_dek_rotation < ? or (created_at < ? and last_dek_rotation is null)", 
-          ::Portunus.configuration.max_key_duration,
-          ::Portunus.configuration.max_key_duration
+          DateTime.now - ::Portunus.configuration.max_key_duration,
+          DateTime.now - ::Portunus.configuration.max_key_duration
         )
     end
     scope.in_batches do |relation|
