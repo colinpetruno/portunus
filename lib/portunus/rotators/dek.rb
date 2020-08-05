@@ -12,6 +12,12 @@ module Portunus
       def rotate
         encryptable = data_encryption_key.encryptable
 
+        if encryptable.blank?
+          Rails.logger.debug("Dek id: #{data_encryption_key.id} is missing it's encryptable... deleting")
+          data_encryption_key.destroy
+          return true
+        end
+
         Rails.logger.debug(
           "Rotating Encryptable: #{encryptable.class}, id: #{encryptable.id}"
         )

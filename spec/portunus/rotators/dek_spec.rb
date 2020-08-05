@@ -39,10 +39,29 @@ describe ::Portunus::Rotators::Dek do
     end
 
     it "will raise a portunus error if something goes wrong" do
-      data_encryption_key = ::Portunus::DataEncryptionKey.new
+      class FakeKey
+        def encryptable
+          nil
+        end
+
+        def destroy
+          raise StandardError.new()
+        end
+      end
+
+      data_encryption_key = FakeKey.new
+
 
       expect{::Portunus::Rotators::Dek.for(data_encryption_key)}.
         to raise_error(Portunus::Error)
+    end
+
+    it "should delete unused keys" do
+      data_encryption_key = ::Portunus::DataEncryptionKey.new
+
+      expect(data_encryption_key).to receive(:destroy).and_return(true)
+
+      ::Portunus::Rotators::Dek.for(data_encryption_key)
     end
   end
 end

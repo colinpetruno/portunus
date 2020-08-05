@@ -35,7 +35,7 @@ module Portunus
       end
 
       def wrapped_current_master_key
-        [data_encryption_key.master_keyname]
+        [data_encryption_key.master_keyname.to_sym]
       end
 
       def master_keys

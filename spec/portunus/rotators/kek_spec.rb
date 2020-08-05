@@ -36,7 +36,7 @@ describe Portunus::Rotators::Kek do
       Portunus::Rotators::Kek.for(dek)
 
       expect(dek.last_kek_rotation).to_not be_nil
-      expect(original_master_key != dek.master_keyname).to eql(true)
+      expect(original_master_key != dek.master_keyname).to eql(true) # this one is false randomly
       expect(dek.key == original_key).to eql(true)
     end
   end
